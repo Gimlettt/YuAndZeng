@@ -146,7 +146,9 @@ async function sendHistoryMessage() {
     // Create a simplified summary instead of full JSON
     const videoList = historyData.videos.map((v, idx) => {
       const date = new Date(v.timestamp);
-      return `${idx + 1}. "${v.title}" by ${v.channel || 'Unknown'} (${date.toLocaleDateString()} ${date.toLocaleTimeString()}) - ${v.url}`;
+      const dateStr = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+      const channelStr = v.channel ? ` by ${v.channel}` : '';
+      return `${idx + 1}. "${v.title}"${channelStr} (${dateStr}) - ${v.url}`;
     }).join('\n');
 
     const summary = `Total videos: ${historyData.totalCount}
@@ -157,9 +159,18 @@ Videos watched:
 ${videoList}`;
 
     // Prepare prompt for Gemini
-    const systemPrompt = `You are a helpful AI assistant analyzing a user's YouTube viewing history.
-Answer questions about their viewing patterns, help them find specific videos, and generate reports.
-Be concise and friendly. Format your response clearly with bullet points or numbered lists when appropriate.`;
+    const systemPrompt = `You are a helpful YouTube viewing history assistant.
+
+RESPONSE GUIDELINES:
+- **For simple questions** (e.g., "when did I watch X?", "find video about Y"): Give a SHORT, DIRECT answer. Just list the relevant videos with dates and URLs. No lengthy analysis.
+- **For report requests** (e.g., "generate report", "analyze patterns"): Provide a detailed structured report with sections (Executive Summary, Breakdown, Top Themes, Insights), use emojis (📊, 📅, 🏆, 💡).
+
+DATA HANDLING:
+- Work with available data (titles, dates, URLs). Channel info may be missing - that's OK.
+- For find/when queries: List matching videos as: "Title" (Date Time) - URL
+- For pattern analysis: Identify themes from titles, binge-watching, repeated views, time patterns.
+
+Be concise for simple queries, detailed only when asked for reports or analysis.`;
 
     const userPrompt = `Here is the user's YouTube viewing history:
 
@@ -167,7 +178,7 @@ ${summary}
 
 User question: ${question}
 
-Please provide a helpful, clear answer based on this viewing history.`;
+Answer directly and appropriately based on the question type.`;
 
     console.log('Calling Gemini API...');
     console.log('Prompt size:', userPrompt.length, 'characters');
