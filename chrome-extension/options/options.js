@@ -5,6 +5,7 @@ const configForm = document.getElementById('configForm');
 const enabledInput = document.getElementById('enabled');
 const backendEndpointInput = document.getElementById('backendEndpoint');
 const apiKeyInput = document.getElementById('apiKey');
+const chatApiKeyInput = document.getElementById('chatApiKey');
 const syncIntervalInput = document.getElementById('syncInterval');
 const syncIntervalValue = document.getElementById('syncIntervalValue');
 const historyDaysInput = document.getElementById('historyDays');
@@ -34,6 +35,7 @@ async function loadData() {
     enabledInput.checked = config.enabled;
     backendEndpointInput.value = config.backendEndpoint;
     apiKeyInput.value = config.apiKey;
+    chatApiKeyInput.value = config.chatApiKey || '';
     syncIntervalInput.value = config.syncInterval;
     syncIntervalValue.textContent = config.syncInterval;
     historyDaysInput.value = config.historyDays;
@@ -74,6 +76,7 @@ configForm.addEventListener('submit', async (e) => {
       enabled: enabledInput.checked,
       backendEndpoint: backendEndpointInput.value.trim(),
       apiKey: apiKeyInput.value.trim(),
+      chatApiKey: chatApiKeyInput.value.trim(),
       syncInterval: parseInt(syncIntervalInput.value),
       historyDays: parseInt(historyDaysInput.value),
       historyMaxItems: parseInt(historyMaxItemsInput.value)

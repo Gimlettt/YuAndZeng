@@ -8,6 +8,7 @@ const lastSyncEl = document.getElementById('lastSync');
 const toggleBtn = document.getElementById('toggleBtn');
 const syncBtn = document.getElementById('syncBtn');
 const settingsBtn = document.getElementById('settingsBtn');
+const refreshBtn = document.getElementById('refreshBtn');
 
 let isEnabled = true;
 
@@ -103,6 +104,34 @@ toggleBtn.addEventListener('click', async () => {
 // Sync functionality removed - not used in this version
 // (Sync button is hidden in HTML)
 
+// Refresh button
+if (refreshBtn) {
+  refreshBtn.addEventListener('click', async () => {
+    try {
+      refreshBtn.disabled = true;
+      refreshBtn.classList.add('loading');
+
+      // Reload stats
+      await loadStatus();
+
+      // Visual feedback
+      const icon = refreshBtn.querySelector('.btn-icon');
+      const originalIcon = icon.textContent;
+      icon.textContent = '✅';
+
+      setTimeout(() => {
+        icon.textContent = originalIcon;
+        refreshBtn.disabled = false;
+        refreshBtn.classList.remove('loading');
+      }, 1000);
+    } catch (error) {
+      console.error('Error refreshing:', error);
+      refreshBtn.disabled = false;
+      refreshBtn.classList.remove('loading');
+    }
+  });
+}
+
 // Open settings
 settingsBtn.addEventListener('click', () => {
   chrome.runtime.openOptionsPage();
@@ -110,6 +139,21 @@ settingsBtn.addEventListener('click', () => {
 
 // Auto-refresh stats every 10 seconds
 setInterval(loadStatus, 10000);
+
+// Tab switching
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tabName = btn.dataset.tab;
+
+    // Remove active class from all tabs and buttons
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+
+    // Add active class to clicked tab and corresponding content
+    btn.classList.add('active');
+    document.getElementById(`${tabName}-tab`).classList.add('active');
+  });
+});
 
 // Initialize
 loadStatus();

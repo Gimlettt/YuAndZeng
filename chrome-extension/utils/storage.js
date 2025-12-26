@@ -6,6 +6,7 @@ const StorageManager = {
     enabled: true,
     backendEndpoint: '',
     apiKey: '',
+    chatApiKey: '', // API key for video chat
     syncInterval: 30, // minutes
     historyDays: 7,
     historyMaxItems: 100

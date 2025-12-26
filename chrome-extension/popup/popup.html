@@ -20,65 +20,132 @@
       </div>
     </header>
 
-    <!-- Stats Grid -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon">📊</div>
-        <div class="stat-content">
-          <div class="stat-value" id="totalVideos">0</div>
-          <div class="stat-label">Total Videos</div>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-icon">📅</div>
-        <div class="stat-content">
-          <div class="stat-value" id="todayCount">0</div>
-          <div class="stat-label">Today</div>
-        </div>
-      </div>
-
-      <!-- Last Sync card hidden - feature not used in this version -->
-      <!--
-      <div class="stat-card stat-card-full">
-        <div class="stat-icon">🔄</div>
-        <div class="stat-content">
-          <div class="stat-value small" id="lastSync">Never</div>
-          <div class="stat-label">Last Sync</div>
-        </div>
-      </div>
-      -->
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="dashboard">📊 Dashboard</button>
+      <button class="tab-btn" data-tab="chat">💬 Video Chat</button>
     </div>
 
-    <!-- Actions -->
-    <div class="actions">
-      <button id="toggleBtn" class="btn btn-primary btn-large">
-        <span class="btn-icon">⏸️</span>
-        <span class="btn-text">Pause Tracking</span>
-      </button>
+    <!-- Dashboard Tab Content -->
+    <div class="tab-content active" id="dashboard-tab">
+      <!-- Dashboard Header with Settings Icon -->
+      <div class="dashboard-header">
+        <div class="dashboard-title">📊 Dashboard</div>
+        <button id="settingsBtn" class="icon-btn" title="Settings">
+          ⚙️
+        </button>
+      </div>
 
-      <div class="action-buttons">
-        <!-- Sync button hidden - feature not used in this version -->
-        <!--
-        <button id="syncBtn" class="btn btn-secondary">
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📊</div>
+          <div class="stat-content">
+            <div class="stat-value" id="totalVideos">0</div>
+            <div class="stat-label">Total Videos</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">📅</div>
+          <div class="stat-content">
+            <div class="stat-value" id="todayCount">0</div>
+            <div class="stat-label">Today</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Controls -->
+      <div class="quick-controls">
+        <button id="toggleBtn" class="btn btn-primary">
+          <span class="btn-icon">⏸️</span>
+          <span class="btn-text">Pause Tracking</span>
+        </button>
+        <button id="refreshBtn" class="btn btn-secondary icon-only">
           <span class="btn-icon">🔄</span>
-          <span class="btn-text">Sync</span>
         </button>
-        -->
-        <button id="settingsBtn" class="btn btn-secondary btn-full-width">
-          <span class="btn-icon">⚙️</span>
-          <span class="btn-text">Settings</span>
+      </div>
+
+      <!-- History Chat Section -->
+      <div class="history-chat-section">
+        <div class="section-header">
+          <div class="section-title">📚 Ask About Your History</div>
+          <div class="data-info" id="dataInfo">
+            <span id="historyRange">Last 7 days</span>
+          </div>
+        </div>
+
+        <!-- Quick Question Buttons -->
+        <div class="quick-questions">
+          <button class="quick-btn" data-prompt="Generate a detailed weekly report of my YouTube viewing patterns, including most watched channels and categories.">
+            📈 Weekly Report
+          </button>
+          <button class="quick-btn" data-prompt="Help me find a specific video I watched. List recent videos with their titles and channels.">
+            🔍 Find Video
+          </button>
+          <button class="quick-btn" data-prompt="List all videos I watched today with their titles, channels, and timestamps.">
+            📅 Today's Videos
+          </button>
+          <button class="quick-btn" data-prompt="Analyze my viewing patterns: which channels do I watch most frequently?">
+            ⏱️ Watch Patterns
+          </button>
+        </div>
+
+        <!-- History Chat Messages -->
+        <div class="history-chat-messages" id="historyMessages">
+          <div class="chat-welcome">
+            <div class="chat-welcome-icon">💡</div>
+            <div class="chat-welcome-text">Ask me about your viewing history!</div>
+            <div class="chat-welcome-hint">Examples: "What videos did I watch yesterday?", "Find that cooking video", "Generate a report"</div>
+          </div>
+        </div>
+
+        <!-- History Chat Input -->
+        <div class="history-chat-input-container">
+          <input type="text" id="historyInput" class="history-chat-input" placeholder="Ask about your viewing history..." />
+          <button id="historySendBtn" class="history-send-btn">
+            <span class="btn-icon">📤</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- End Dashboard Tab -->
+
+    <!-- Chat Tab Content -->
+    <div class="tab-content" id="chat-tab">
+      <!-- Video Context Bar -->
+      <div class="video-context" id="videoContext">
+        <div class="video-context-icon">🎥</div>
+        <div class="video-context-info">
+          <div class="video-context-title" id="currentVideoTitle">No video detected</div>
+          <div class="video-context-url" id="currentVideoUrl">Open a YouTube video to chat</div>
+        </div>
+      </div>
+
+      <!-- Chat Messages -->
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-welcome">
+          <div class="chat-welcome-icon">💬</div>
+          <div class="chat-welcome-text">Ask me anything about the YouTube video!</div>
+          <div class="chat-welcome-hint">I can describe, summarize, or answer questions about the video content.</div>
+        </div>
+      </div>
+
+      <!-- Chat Input -->
+      <div class="chat-input-container">
+        <input type="text" id="chatInput" class="chat-input" placeholder="Ask a question about this video..." />
+        <button id="chatSendBtn" class="chat-send-btn">
+          <span class="btn-icon">📤</span>
         </button>
       </div>
     </div>
+    <!-- End Chat Tab -->
 
-    <!-- Footer Info -->
-    <div class="footer-info">
-      <p class="info-text">Monitoring YouTube videos automatically</p>
-    </div>
   </div>
 
   <script src="../utils/storage.js"></script>
   <script src="popup.js"></script>
+  <script src="chat.js"></script>
+  <script src="history-chat.js"></script>
 </body>
 </html>
