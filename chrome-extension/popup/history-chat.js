@@ -2,7 +2,7 @@
 console.log('History Chat: Initializing...');
 
 // Gemini API configuration
-const GEMINI_API_KEY = 'AIzaSyD1TXg8nFSWW2y8rZfqJ9ykqfuz0U9451o';
+const GEMINI_API_KEY = 'AIzaSyB9YYNZtshSe937pMKkGPQlh19H-87HGI0';
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
 // DOM Elements
