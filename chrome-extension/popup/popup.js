@@ -14,34 +14,22 @@ let isEnabled = true;
 // Load current status
 async function loadStatus() {
   try {
-    const response = await chrome.runtime.sendMessage({ type: 'GET_STATUS' });
+    console.log('Popup: Reading status directly from storage...');
+
+    // Read directly from storage (more reliable than messaging background)
+    const response = await StorageManager.getStats();
+    console.log('Popup: Status loaded:', response);
 
     totalVideosEl.textContent = response.totalVideos || 0;
     todayCountEl.textContent = response.todayCount || 0;
-
-    if (response.lastSync) {
-      const date = new Date(response.lastSync);
-      const now = new Date();
-      const diffMinutes = Math.floor((now - date) / (1000 * 60));
-
-      if (diffMinutes < 1) {
-        lastSyncEl.textContent = 'Just now';
-      } else if (diffMinutes < 60) {
-        lastSyncEl.textContent = `${diffMinutes}m ago`;
-      } else if (diffMinutes < 1440) {
-        const hours = Math.floor(diffMinutes / 60);
-        lastSyncEl.textContent = `${hours}h ago`;
-      } else {
-        lastSyncEl.textContent = date.toLocaleDateString();
-      }
-    } else {
-      lastSyncEl.textContent = 'Never';
-    }
 
     isEnabled = response.enabled;
     updateUI();
   } catch (error) {
     console.error('Error loading status:', error);
+    // Show 0 on error but don't crash
+    totalVideosEl.textContent = 0;
+    todayCountEl.textContent = 0;
   }
 }
 
@@ -65,48 +53,55 @@ function updateUI() {
 // Toggle enabled state
 toggleBtn.addEventListener('click', async () => {
   try {
+    // Prevent double clicks
+    if (toggleBtn.disabled) return;
+
+    toggleBtn.disabled = true;
     toggleBtn.classList.add('loading');
 
-    const response = await chrome.runtime.sendMessage({ type: 'TOGGLE_ENABLED' });
-    isEnabled = response.enabled;
+    // Read current config from storage
+    const config = await StorageManager.getConfig();
+
+    // Toggle the enabled state
+    config.enabled = !config.enabled;
+
+    // Save back to storage
+    await StorageManager.saveConfig(config);
+
+    // Update local state
+    isEnabled = config.enabled;
+
+    // Update UI
     updateUI();
 
     // Show feedback
-    const originalText = toggleBtn.querySelector('.btn-text').textContent;
     toggleBtn.querySelector('.btn-text').textContent = isEnabled ? '✅ Enabled' : '⏸️ Paused';
 
     setTimeout(() => {
       updateUI();
+      toggleBtn.disabled = false;
     }, 1500);
+
+    // Notify background script (don't wait for response)
+    chrome.runtime.sendMessage({
+      type: 'TOGGLE_ENABLED',
+      enabled: config.enabled
+    }).catch(err => {
+      // Background might be sleeping, that's ok
+      console.log('Background not available, but config saved to storage');
+    });
+
   } catch (error) {
     console.error('Error toggling:', error);
+    alert('Failed to toggle tracking. Please try again.');
+    toggleBtn.disabled = false;
   } finally {
     toggleBtn.classList.remove('loading');
   }
 });
 
-// Sync now
-syncBtn.addEventListener('click', async () => {
-  try {
-    const originalText = syncBtn.querySelector('.btn-text').textContent;
-    syncBtn.querySelector('.btn-text').textContent = 'Syncing...';
-    syncBtn.disabled = true;
-
-    await chrome.runtime.sendMessage({ type: 'SYNC_NOW' });
-
-    syncBtn.querySelector('.btn-text').textContent = '✅ Synced';
-
-    setTimeout(() => {
-      syncBtn.querySelector('.btn-text').textContent = originalText;
-      syncBtn.disabled = false;
-      loadStatus(); // Refresh status
-    }, 1500);
-  } catch (error) {
-    console.error('Error syncing:', error);
-    syncBtn.querySelector('.btn-text').textContent = '❌ Failed';
-    syncBtn.disabled = false;
-  }
-});
+// Sync functionality removed - not used in this version
+// (Sync button is hidden in HTML)
 
 // Open settings
 settingsBtn.addEventListener('click', () => {

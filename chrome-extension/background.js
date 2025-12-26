@@ -3,6 +3,21 @@ importScripts('utils/storage.js');
 
 let syncIntervalId = null;
 
+// Helper function to check if URL is a real YouTube video page
+function isYouTubeVideoUrl(url) {
+  if (!url) return false;
+
+  // Match only watch pages and shorts
+  // watch: youtube.com/watch?v=VIDEO_ID
+  // shorts: youtube.com/shorts/VIDEO_ID
+  const patterns = [
+    /youtube\.com\/watch\?v=[\w-]+/,
+    /youtube\.com\/shorts\/[\w-]+/
+  ];
+
+  return patterns.some(pattern => pattern.test(url));
+}
+
 // Initialize extension on install
 chrome.runtime.onInstalled.addListener(async (details) => {
   console.log('Extension installed:', details.reason);
@@ -46,7 +61,7 @@ async function fetchBrowserHistory() {
 
     // Filter and save YouTube videos
     for (const item of historyItems) {
-      if (item.url && item.url.includes('youtube.com/watch')) {
+      if (isYouTubeVideoUrl(item.url)) {
         await StorageManager.addVideo({
           title: item.title || 'Untitled',
           url: item.url,
@@ -69,12 +84,12 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
     if (!config.enabled) return;
 
-    // Check if it's a YouTube video page
-    if (tab.url.includes('youtube.com/watch')) {
+    // Check if it's a real YouTube video page (watch or shorts)
+    if (isYouTubeVideoUrl(tab.url)) {
       console.log('YouTube video detected:', tab.url);
 
       // The content script will handle capturing the title
-      // This is just a fallback
+      // This is just a fallback if content script doesn't fire
       await StorageManager.addVideo({
         title: tab.title || 'YouTube Video',
         url: tab.url,
@@ -96,21 +111,28 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         ...message.data,
         source: 'content_script'
       });
+      console.log('Video added, checking stats...');
+      const stats = await StorageManager.getStats();
+      console.log('Current stats:', stats);
+    } else {
+      console.log('Extension is disabled, not saving video');
     }
 
     sendResponse({ success: true });
   } else if (message.type === 'GET_STATUS') {
     const stats = await StorageManager.getStats();
+    console.log('GET_STATUS requested, returning:', stats);
     sendResponse(stats);
   } else if (message.type === 'TOGGLE_ENABLED') {
+    // Popup has already updated storage, just manage sync timer
     const config = await StorageManager.getConfig();
-    config.enabled = !config.enabled;
-    await StorageManager.saveConfig(config);
 
     if (config.enabled) {
       startSyncTimer();
+      console.log('Tracking enabled, sync timer started');
     } else {
       stopSyncTimer();
+      console.log('Tracking disabled, sync timer stopped');
     }
 
     sendResponse({ enabled: config.enabled });

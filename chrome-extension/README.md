@@ -2,7 +2,7 @@
 
 A Chrome extension that tracks your YouTube viewing history in real-time, captures video titles and URLs, and syncs data to your backend.
 
-Built for hackathons with a modern, beautiful UI! ✨
+Developed by memories.ai with a modern, beautiful UI! ✨
 
 ## 🌟 Features
 
@@ -176,7 +176,7 @@ If you have a backend API:
 
 ## 🎯 Usage Guide
 
-### For Hackathon Demo
+### For Demo Presentation
 
 1. **Install** the extension in Chrome
 2. **Configure** your backend endpoint in Settings
@@ -363,14 +363,14 @@ app.listen(3000, () => {
 
 ## 📄 License
 
-MIT License - Feel free to use for hackathons and personal projects!
+MIT License - Feel free to use for personal projects!
 
 ## 🤝 Contributing
 
-Built for a hackathon, but contributions are welcome! Feel free to submit issues or PRs.
+Contributions are welcome! Feel free to submit issues or PRs.
 
 ---
 
-Made with ❤️ for the Hackathon
+Developed by memories.ai
 
 Good luck with your presentation! 🎉

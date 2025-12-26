@@ -31,16 +31,27 @@ const StorageManager = {
   // Add a new video
   async addVideo(video) {
     const videos = await this.getVideos();
-    const exists = videos.some(v => v.url === video.url && v.timestamp === video.timestamp);
 
-    if (!exists) {
-      videos.push({
-        ...video,
-        id: Date.now() + Math.random(),
-        timestamp: video.timestamp || Date.now()
-      });
-      await chrome.storage.local.set({ videos });
+    // Check if the same URL was captured in the last 2 minutes (avoid duplicates from different sources)
+    const twoMinutesAgo = Date.now() - (2 * 60 * 1000);
+    const recentDuplicate = videos.some(v =>
+      v.url === video.url && v.timestamp > twoMinutesAgo
+    );
+
+    if (recentDuplicate) {
+      console.log('Video already captured recently, skipping:', video.url);
+      return;
     }
+
+    const newVideo = {
+      ...video,
+      id: Date.now() + Math.random(),
+      timestamp: video.timestamp || Date.now()
+    };
+
+    videos.push(newVideo);
+    await chrome.storage.local.set({ videos });
+    console.log('Video saved to storage:', newVideo);
   },
 
   // Clear all videos
@@ -53,14 +64,19 @@ const StorageManager = {
     const videos = await this.getVideos();
     const config = await this.getConfig();
 
+    // Filter videos based on historyDays setting
+    const cutoffTime = Date.now() - (config.historyDays * 24 * 60 * 60 * 1000);
+    const recentVideos = videos.filter(v => v.timestamp >= cutoffTime);
+
+    // Count today's videos (from filtered set)
+    const today = new Date().setHours(0, 0, 0, 0);
+    const todayCount = recentVideos.filter(v => v.timestamp >= today).length;
+
     return {
-      totalVideos: videos.length,
+      totalVideos: recentVideos.length,
       enabled: config.enabled,
       lastSync: await this.getLastSync(),
-      todayCount: videos.filter(v => {
-        const today = new Date().setHours(0, 0, 0, 0);
-        return v.timestamp >= today;
-      }).length
+      todayCount: todayCount
     };
   },
 
@@ -81,11 +97,17 @@ const StorageManager = {
     const config = await this.getConfig();
     const stats = await this.getStats();
 
+    // Filter videos based on historyDays setting (same as getStats)
+    const cutoffTime = Date.now() - (config.historyDays * 24 * 60 * 60 * 1000);
+    const recentVideos = videos.filter(v => v.timestamp >= cutoffTime);
+
     return {
       exportDate: new Date().toISOString(),
       config,
       stats,
-      videos
+      videos: recentVideos,
+      totalCount: recentVideos.length,
+      note: `Exported videos from last ${config.historyDays} days`
     };
   }
 };

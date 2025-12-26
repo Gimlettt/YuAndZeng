@@ -146,16 +146,16 @@ syncBtn.addEventListener('click', async () => {
 
     const response = await chrome.runtime.sendMessage({ type: 'SYNC_NOW' });
 
-    if (response.success) {
+    if (response && response.success) {
       const stats = await StorageManager.getStats();
       updateStatus(stats);
       showMessage('✅ Data synced successfully!', 'success');
     } else {
-      showMessage('❌ Sync failed', 'error');
+      showMessage('❌ Sync failed - check backend configuration', 'error');
     }
   } catch (error) {
-    showMessage('❌ Error syncing data', 'error');
-    console.error(error);
+    showMessage('❌ Error syncing data: ' + error.message, 'error');
+    console.error('Sync error:', error);
   } finally {
     syncBtn.disabled = false;
     syncBtn.textContent = '🔄 Sync Now';
@@ -170,20 +170,23 @@ fetchHistoryBtn.addEventListener('click', async () => {
 
     const response = await chrome.runtime.sendMessage({ type: 'FETCH_HISTORY' });
 
-    if (response.success) {
+    if (response && response.success) {
       // Wait a bit for the fetch to complete
       setTimeout(async () => {
         const stats = await StorageManager.getStats();
         updateStatus(stats);
         showMessage('✅ History fetched successfully!', 'success');
+        fetchHistoryBtn.disabled = false;
+        fetchHistoryBtn.textContent = '📚 Fetch History';
       }, 2000);
     } else {
-      showMessage('❌ Fetch failed', 'error');
+      showMessage('❌ Fetch failed - make sure extension has history permission', 'error');
+      fetchHistoryBtn.disabled = false;
+      fetchHistoryBtn.textContent = '📚 Fetch History';
     }
   } catch (error) {
-    showMessage('❌ Error fetching history', 'error');
-    console.error(error);
-  } finally {
+    showMessage('❌ Error fetching history: ' + error.message, 'error');
+    console.error('Fetch history error:', error);
     fetchHistoryBtn.disabled = false;
     fetchHistoryBtn.textContent = '📚 Fetch History';
   }

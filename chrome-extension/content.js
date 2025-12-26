@@ -4,12 +4,27 @@ console.log('YouTube History Tracker: Content script loaded');
 let lastCapturedUrl = null;
 let observerActive = false;
 
+// Helper function to check if URL is a real YouTube video page
+function isYouTubeVideoUrl(url) {
+  if (!url) return false;
+
+  // Match only watch pages and shorts
+  // watch: youtube.com/watch?v=VIDEO_ID
+  // shorts: youtube.com/shorts/VIDEO_ID
+  const patterns = [
+    /youtube\.com\/watch\?v=[\w-]+/,
+    /youtube\.com\/shorts\/[\w-]+/
+  ];
+
+  return patterns.some(pattern => pattern.test(url));
+}
+
 // Capture video information
 function captureVideoInfo() {
   const url = window.location.href;
 
-  // Only process YouTube watch pages
-  if (!url.includes('youtube.com/watch')) {
+  // Only process real YouTube video pages (watch or shorts)
+  if (!isYouTubeVideoUrl(url)) {
     return;
   }
 
