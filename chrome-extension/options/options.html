@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube History Tracker - Settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="header-content">
+        <h1>⚙️ Settings</h1>
+        <p class="subtitle">Configure your YouTube History Tracker</p>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <!-- Status Card -->
+      <div class="card status-card">
+        <div class="card-header">
+          <h2>📊 Status</h2>
+        </div>
+        <div class="card-body">
+          <div class="status-grid">
+            <div class="status-item">
+              <span class="status-label">Total Videos</span>
+              <span class="status-value" id="totalVideos">0</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Today</span>
+              <span class="status-value" id="todayCount">0</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Last Sync</span>
+              <span class="status-value" id="lastSync">Never</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Status</span>
+              <span class="status-value status-badge" id="statusBadge">Enabled</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Configuration Form -->
+      <form id="configForm" class="card">
+        <div class="card-header">
+          <h2>🔧 Configuration</h2>
+        </div>
+        <div class="card-body">
+
+          <!-- Enable/Disable -->
+          <div class="form-group">
+            <label class="toggle-label">
+              <input type="checkbox" id="enabled" class="toggle-input">
+              <span class="toggle-slider"></span>
+              <span class="toggle-text">Enable Tracking</span>
+            </label>
+            <p class="form-help">Turn on/off video tracking and monitoring</p>
+          </div>
+
+          <!-- Backend Endpoint -->
+          <div class="form-group">
+            <label for="backendEndpoint" class="form-label">Backend Endpoint</label>
+            <input
+              type="url"
+              id="backendEndpoint"
+              class="form-input"
+              placeholder="https://api.example.com/videos"
+            >
+            <p class="form-help">API endpoint for syncing data</p>
+          </div>
+
+          <!-- API Key -->
+          <div class="form-group">
+            <label for="apiKey" class="form-label">API Key</label>
+            <input
+              type="password"
+              id="apiKey"
+              class="form-input"
+              placeholder="Enter your API key"
+            >
+            <p class="form-help">Authentication key for backend API</p>
+          </div>
+
+          <!-- Sync Interval -->
+          <div class="form-group">
+            <label for="syncInterval" class="form-label">
+              Sync Interval (minutes)
+              <span class="form-value" id="syncIntervalValue">30</span>
+            </label>
+            <input
+              type="range"
+              id="syncInterval"
+              class="form-range"
+              min="5"
+              max="120"
+              step="5"
+              value="30"
+            >
+            <p class="form-help">How often to sync data to backend</p>
+          </div>
+
+          <!-- History Days -->
+          <div class="form-group">
+            <label for="historyDays" class="form-label">
+              History Days
+              <span class="form-value" id="historyDaysValue">7</span>
+            </label>
+            <input
+              type="range"
+              id="historyDays"
+              class="form-range"
+              min="1"
+              max="90"
+              step="1"
+              value="7"
+            >
+            <p class="form-help">Number of days to fetch from browser history</p>
+          </div>
+
+          <!-- History Max Items -->
+          <div class="form-group">
+            <label for="historyMaxItems" class="form-label">
+              Max History Items
+              <span class="form-value" id="historyMaxItemsValue">100</span>
+            </label>
+            <input
+              type="range"
+              id="historyMaxItems"
+              class="form-range"
+              min="10"
+              max="1000"
+              step="10"
+              value="100"
+            >
+            <p class="form-help">Maximum number of history items to fetch</p>
+          </div>
+
+        </div>
+        <div class="card-footer">
+          <button type="submit" class="btn btn-primary">💾 Save Settings</button>
+          <button type="button" id="resetBtn" class="btn btn-secondary">🔄 Reset to Default</button>
+        </div>
+      </form>
+
+      <!-- Data Management -->
+      <div class="card">
+        <div class="card-header">
+          <h2>📦 Data Management</h2>
+        </div>
+        <div class="card-body">
+          <div class="button-grid">
+            <button id="exportBtn" class="btn btn-success">📥 Export JSON</button>
+            <button id="clearBtn" class="btn btn-danger">🗑️ Clear All Data</button>
+            <button id="syncBtn" class="btn btn-primary">🔄 Sync Now</button>
+            <button id="fetchHistoryBtn" class="btn btn-primary">📚 Fetch History</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Success/Error Messages -->
+      <div id="message" class="message hidden"></div>
+    </main>
+
+    <footer class="footer">
+      <p>Made with ❤️ for the Hackathon</p>
+    </footer>
+  </div>
+
+  <script src="../utils/storage.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

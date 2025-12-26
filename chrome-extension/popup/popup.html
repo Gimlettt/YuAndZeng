@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube History Tracker</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">🎥</span>
+        <h1 class="logo-text">YouTube Tracker</h1>
+      </div>
+      <div class="status-indicator" id="statusIndicator">
+        <span class="status-dot"></span>
+        <span class="status-text">Active</span>
+      </div>
+    </header>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-content">
+          <div class="stat-value" id="totalVideos">0</div>
+          <div class="stat-label">Total Videos</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-content">
+          <div class="stat-value" id="todayCount">0</div>
+          <div class="stat-label">Today</div>
+        </div>
+      </div>
+
+      <div class="stat-card stat-card-full">
+        <div class="stat-icon">🔄</div>
+        <div class="stat-content">
+          <div class="stat-value small" id="lastSync">Never</div>
+          <div class="stat-label">Last Sync</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button id="toggleBtn" class="btn btn-primary btn-large">
+        <span class="btn-icon">⏸️</span>
+        <span class="btn-text">Pause Tracking</span>
+      </button>
+
+      <div class="action-buttons">
+        <button id="syncBtn" class="btn btn-secondary">
+          <span class="btn-icon">🔄</span>
+          <span class="btn-text">Sync</span>
+        </button>
+        <button id="settingsBtn" class="btn btn-secondary">
+          <span class="btn-icon">⚙️</span>
+          <span class="btn-text">Settings</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer Info -->
+    <div class="footer-info">
+      <p class="info-text">Monitoring YouTube videos automatically</p>
+    </div>
+  </div>
+
+  <script src="../utils/storage.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
